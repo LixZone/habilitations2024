@@ -1,11 +1,7 @@
 ﻿using habilitations2024.dal;
 using habilitations2024.model;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace habilitations2024.controller
 {
@@ -33,12 +29,12 @@ namespace habilitations2024.controller
         }
 
         /// <summary>
-        /// Récupère et retourne les infos des développeurs
+        /// Récupère et retourne les infos des développeurs filtrés
         /// </summary>
         /// <returns>liste des développeurs</returns>
-        public List<Developpeur> GetLesDeveloppeurs()
+        public List<Developpeur> GetLesDeveloppeurs(string filtre="")
         {
-            return developpeurAccess.GetLesDeveloppeurs();
+            return developpeurAccess.GetLesDeveloppeurs(filtre);
         }
 
         /// <summary>

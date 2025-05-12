@@ -1,9 +1,6 @@
 ﻿using habilitations2024.model;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Serilog;
 
 namespace habilitations2024.dal
@@ -63,20 +60,28 @@ namespace habilitations2024.dal
         }
 
         /// <summary>
-        /// Récupère et retourne les développeurs
+        /// Récupère et retourne les développeurs filtrés par profil
         /// </summary>
         /// <returns>liste des développeurs</returns>
-        public List<Developpeur> GetLesDeveloppeurs()
+        public List<Developpeur> GetLesDeveloppeurs(string filtre)
         {
             List<Developpeur> lesDeveloppeurs = new List<Developpeur>();
+            Dictionary<string, object> parameters = null;
             if (access.Manager != null)
             {
                 string req = "select d.iddeveloppeur as iddeveloppeur, d.nom as nom, d.prenom as prenom, d.tel as tel, d.mail as mail, p.idprofil as idprofil, p.nom as profil ";
                 req += "from developpeur d join profil p on (d.idprofil = p.idprofil) ";
+                if(filtre!= "")
+                {
+                    req += "where p.nom = @filtre ";
+                    parameters = new Dictionary<string, object> {
+                        {"@filtre", filtre }
+                    };
+                }
                 req += "order by nom, prenom;";
                 try
                 {
-                    List<Object[]> records = access.Manager.ReqSelect(req);
+                    List<Object[]> records = access.Manager.ReqSelect(req, parameters);
                     if (records != null)
                     {
                         Log.Debug("DeveloppeurAccess.GetLesDeveloppeurs nb records = {0}", records.Count);

@@ -2,12 +2,8 @@
 using habilitations2024.model;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace habilitations2024.view
@@ -29,6 +25,10 @@ namespace habilitations2024.view
         /// Objet pour gérer la liste des profils
         /// </summary>
         private readonly BindingSource bdgProfils = new BindingSource();
+        /// <summary>
+        /// Objet pour gérer la liste des profils
+        /// </summary>
+        private readonly BindingSource bdgFiltreProfil = new BindingSource();
         /// <summary>
         /// Controleur de la fenêtre
         /// </summary>
@@ -65,11 +65,17 @@ namespace habilitations2024.view
         }
 
         /// <summary>
-        /// Affiche les développeurs
+        /// Affiche les développeurs en fonction de leur profil
         /// </summary>
         private void RemplirListeDeveloppeurs()
         {
-            List<Developpeur> lesDeveloppeurs = controller.GetLesDeveloppeurs();
+            string filtre = "";
+            if(cboProfilsFiltre.SelectedItem != null && cboProfilsFiltre.SelectedItem is Profil)
+{
+                Profil profilFiltre = (Profil)cboProfilsFiltre.SelectedItem;
+                filtre = profilFiltre.Nom;
+            }
+            List<Developpeur> lesDeveloppeurs = controller.GetLesDeveloppeurs(filtre);
             bdgDeveloppeurs.DataSource = lesDeveloppeurs;
             dgvDeveloppeurs.DataSource = bdgDeveloppeurs;
             dgvDeveloppeurs.Columns["iddeveloppeur"].Visible = false;
@@ -83,8 +89,20 @@ namespace habilitations2024.view
         private void RemplirListeProfils()
         {
             List<Profil> lesProfils = controller.GetLesProfils();
+            List<Profil> lesProfilsFiltre = lesProfils.ToList();
             bdgProfils.DataSource = lesProfils;
             cboProfil.DataSource = bdgProfils;
+            RemplirListeProfilsFiltre(lesProfilsFiltre);
+        }
+
+        /// <summary>
+        /// Affiche les profils du filtre de la liste de développeurs
+        /// </summary>
+        private void RemplirListeProfilsFiltre(List<Profil> lesProfilsFiltre)
+        {
+            lesProfilsFiltre.Insert(0, new Profil(0, ""));
+            bdgFiltreProfil.DataSource = lesProfilsFiltre;
+            cboProfilsFiltre.DataSource = bdgFiltreProfil;
         }
 
         /// <summary>
@@ -318,6 +336,18 @@ namespace habilitations2024.view
                 controller.DelProfil(profil);
                 RemplirListeProfils();
             }
+        }
+
+        /// <summary>
+        /// Demande de suppression d'un profil
+        /// à condition que ce ne soit pas le profil "admin"
+        /// et qu'il ne soit pas attribué
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CboProfilsFiltre_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            RemplirListeDeveloppeurs();
         }
     }
 }
