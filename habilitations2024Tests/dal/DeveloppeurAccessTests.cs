@@ -50,10 +50,24 @@ namespace habilitations2024.dal.Tests
         }
 
         [TestMethod()]
-        public void GetLesDeveloppeursTest()
+        public void GetLesDeveloppeursTestSansProfil()
         {
             List<Developpeur> lesDeveloppeurs = developpeurAccess.GetLesDeveloppeurs();
-            Assert.AreNotEqual(0, lesDeveloppeurs.Count, "devrait réussir : au moins 1 développeur dans la BDD");
+            string req = "select count(*) from developpeur";
+            List<Object[]> records = access.Manager.ReqSelect(req);
+            int nombreAttendu = (int)(Int64)records[0][0];
+            Assert.AreEqual(nombreAttendu, lesDeveloppeurs.Count, "devrait réussir : il y a le bon nombre de développeurs");
+        }
+
+        [TestMethod()]
+        public void GetLesDeveloppeursTestAvecProfil()
+        {
+            List<Developpeur> lesDeveloppeurs = developpeurAccess.GetLesDeveloppeurs("admin");
+            string req = "select count(*) from developpeur d join profil p on d.idprofil = p.idprofil where p.nom = 'admin'";
+            List<Object[]> records = access.Manager.ReqSelect(req);
+            int nombreAttendu = (int)(Int64)records[0][0];
+            Assert.AreEqual(nombreAttendu, lesDeveloppeurs.Count, "devrait réussir : il y a le bon nombre de développeurs");
+            Assert.AreEqual("admin", lesDeveloppeurs[0].Profil.Nom);
         }
 
         [TestMethod()]

@@ -63,7 +63,7 @@ namespace habilitations2024.dal
         /// Récupère et retourne les développeurs filtrés par profil
         /// </summary>
         /// <returns>liste des développeurs</returns>
-        public List<Developpeur> GetLesDeveloppeurs(string filtre)
+        public List<Developpeur> GetLesDeveloppeurs(string filtre="")
         {
             List<Developpeur> lesDeveloppeurs = new List<Developpeur>();
             Dictionary<string, object> parameters = null;
